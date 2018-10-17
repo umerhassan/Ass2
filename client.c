@@ -1,11 +1,4 @@
-/* TCP-based client example of socket programming.    */
-/* This client interacts with the word length server, */
-/* which needs to be running first.                   */
-/*                                                    */
-/* Usage:   cc -o wordlengthclient wordlengthclient.c */
-/*          ./wordlengthclient                        */
-/*                                                    */
-/* Written by Carey Williamson       January 13, 2012 */
+
 
 /* Include files for C socket programming and stuff */
 #include <stdio.h>
@@ -14,9 +7,7 @@
 #include <netdb.h>
 #include <string.h>
 
-/* Some generic error handling stuff */
-extern int errno;
-void perror(const char *s);
+
 
 /* Manifest constants used by client program */
 #define MAX_HOSTNAME_LENGTH 64

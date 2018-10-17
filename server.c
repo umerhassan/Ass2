@@ -1,11 +1,4 @@
-/* TCP-based server example of socket programming.    */
-/* The server receives an input word (e.g., "dog")    */
-/* and returns the length of the word (e.g., "3").    */
-/*                                                    */
-/* Usage:   cc -o wordlengthserver wordlengthserver.c */
-/*          ./wordlengthserver                        */
-/*                                                    */
-/* Written by Carey Williamson       January 13, 2012 */
+
 
 /* Include files for C socket programming and stuff */
 #include <stdio.h>
