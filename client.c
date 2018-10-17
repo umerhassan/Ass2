@@ -71,7 +71,12 @@ int main() {
 	while (1) {
 		gets(message);
 		send(sock, message, sizeof(message), 0);
-
+		count = recv(sock, rcv_message, sizeof(rcv_message), 0);
+		if (count < 0) {
+				printf("Error in recv()\n");
+		} else {
+				printf("Server: %s\n", rcv_message);
+		}
 		if (strstr(message, "Bye") != NULL) {
 			exit(0);
 		}

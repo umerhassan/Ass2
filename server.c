@@ -85,7 +85,15 @@ int main() {
 				printf("Client said: %s\n", rcv_message);
 				
 				/* Send data*/
-				char message[1024]; = { "For termination send \"Bye\"\n" };
+				//char message[1024] = { "For termination send \"Bye\"\n" };
+			
+				int ascii=0;
+				for(int i=0;i<strlen(rcv_message);i++)
+					ascii = ascii + (int)rcv_message[i];
+				char message[1024] ;
+				sprintf(message, "%d", ascii);
+				//strcat(message,rcv_message);
+					
 				count = send(connected_sock, message, sizeof(message), 0);
 				if (count < 0) {
 					printf("Error in send()\n");
@@ -96,13 +104,14 @@ int main() {
 			}
 		}
 
-		//if (rcv_message == "Bye") {
+
 		close(connected_sock);
 		exit(0);
-		//}
+
 
 	}
 	/* Close the socket */
 	close(lstn_sock);
 	return 0;
 }
+
