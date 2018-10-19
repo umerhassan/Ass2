@@ -20,7 +20,9 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include <netdb.h>
-
+static char words[200][200];
+static char hashes[200][200];
+int numberOfWords = 0;
 int main() {
 
 	/* Address initialization */
@@ -78,27 +80,46 @@ int main() {
 		/* Receive data */
 		char rcv_message[1024];
 		while (1) {
+			
 			count = recv(connected_sock, rcv_message, sizeof(rcv_message), 0);
 			if (count < 0) {
 				printf("Error in recv()\n");
-			} else {
+			} 
+			else {
 				printf("Client said: %s\n", rcv_message);
+				//search in the words array
+				for(int i = 0; i < 200; i++){
+					if(strcmp(rcv_message,words[i])==0){
+						send(connected_sock, hashes[i], sizeof(hashes[i]), 0);
+						break;
+					}
+				}
+				//search in the hashes
+				for(int i = 0; i < 200; i++){
+					if(strcmp(rcv_message,hashes[i])==0){
+						send(connected_sock, words[i], sizeof(words[i]), 0);
+						break;
+					}
+				}
 				
-				/* Send data*/
-				//char message[1024] = { "For termination send \"Bye\"\n" };
-			
+				//if the word is not hashed
 				int ascii=0;
 				for(int i=0;i<strlen(rcv_message);i++)
 					ascii = ascii + (int)rcv_message[i];
+				
 				char message[1024] ;
-				sprintf(message, "%d", ascii);
-				//strcat(message,rcv_message);
+				sprintf(message, "%d", ascii); //convert ascii value to string
+				
+				 strcpy(words[numberOfWords], rcv_message);
+				 strcpy(hashes[numberOfWords], message);
+				 numberOfWords++;
 					
 				count = send(connected_sock, message, sizeof(message), 0);
 				if (count < 0) {
 					printf("Error in send()\n");
 				}
 			}
+			
 			if (strstr(rcv_message, "Bye") != NULL) {
 				exit(0);
 			}
