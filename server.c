@@ -21,10 +21,11 @@
 #include <signal.h>
 #include <netdb.h>
 #define HASHASCII 0 //for ascii hash 0 for ignore 1 for if u wanna implement
-#define SIMPLEHASH 1
+#define WORDSUM 0
+#define MYHASH 1
 static char word[200][200]; //for storing words
 static char hash[200][200]; //for storing hashes
-int numberOfWords = 0;
+int numberOfWords = 0; //serves as index
 int main() {
 
 	/* Address initialization */
@@ -112,65 +113,66 @@ int main() {
 						char x[1024];
 						sprintf(x, "%d", ascii); //converting ascii value from int to string and storing in x
 						strcpy(hash[numberOfWords],x); //storing x in hash array
-						numberOfWords++;
+						numberOfWords++; // this is index
 
 						p = strtok (NULL, " ");
 					}
 				
+					//this is to get the hashes in correct order and concat to message as now we are sure there are no words with no hashes
 					char *b = strtok (copyRcv, " ");
 					while (b != NULL)
 					{
-						for(int i = 0; i < 10; i++){
-							printf("b is: %s, word[%d]: %s\n",b,i,word[i]);
+						// I am just doing 10 words now
+						for(int i = 0; i < 10; i++){ 
+							//printf("b is: %s, word[%d]: %s\n",b,i,word[i]);
 
-							if(strcmp(b,word[i])==0){
-								strcat(message,hash[i]);
-								strcat(message," ");
+							if(strcmp(b,word[i])==0){ //compare the substring to word array elements
+								strcat(message,hash[i]); //if found concat to message
+								strcat(message," "); //spacing
 								break;
 							}
 						}
 							
-						printf("b: %s\n",b);
 						b = strtok (NULL, " ");
 					}
 					
-					for(int i = 0; i < 10; i++)
-						printf("Word[%d]: %s\n",i,word[i]);
-					for(int i = 0; i < 10; i++)
-						printf("Hash[%d]: %s\n",i,hash[i]);
-					
-					} else{
+						//For error checking
+						for(int i = 0; i < 10; i++)
+							printf("Word[%d]: %s\n",i,word[i]);
+						for(int i = 0; i < 10; i++)
+							printf("Hash[%d]: %s\n",i,hash[i]);
+						
+				} else { //This is encoding part if message recieved starts with 0x
 						
 						char *b = strtok (copyRcv, " ");
 						while (b != NULL)
 						{
 							b = strtok (NULL, " ");
-							if(b!= NULL){
+							if(b!= NULL)
+							{
 								for(int i = 0; i < 10; i++){
-									printf("hahhah b is: %s, hash[%d]: %s\n",b,i,hash[i]);
-
-									if(strcmp(b,hash[i])==0){
-										strcat(message,word[i]);
-										strcat(message," ");
+									if(strcmp(b,hash[i])==0){ //compare the substring to hash array elements
+										strcat(message,word[i]); //if found concat to message
+										strcat(message," ");  //spacing
 										break;
 									}
-								}
+								}	
 							}
-							printf("message is: %s",message);
 						}
-						
-						
-					}
+							//printf("message is: %s",message);
+				}
+				 
 				
 					
-					send(connected_sock, message, strlen(message), 0);
-					if (strstr(rcv_message, "Bye") != NULL) {
+			send(connected_sock, message, strlen(message), 0);
+			if (strstr(rcv_message, "Bye") != NULL) {
 						exit(0);
-					}
+			}
 		} //Hash ASCII end
 		 
 		
-		if(SIMPLEHASH){
+		/*This is same as above but instead of sending ascii value it sends numberOfWords + 1 value as hash.*/
+		if(WORDSUM){
 			
 			if(strstr(rcv_message, "0x") == NULL) {
 			char *p = strtok (rcv_message, " ");
@@ -228,16 +230,95 @@ int main() {
 					printf("message is: %s",message);
 				}
 				
-				
 			}
 		
-			
 			send(connected_sock, message, strlen(message), 0);
 			if (strstr(rcv_message, "Bye") != NULL) {
 				exit(0);
 			}
 		} //end simple hash
-		} 
+		
+		/*This is start of ASCII HASH*/
+			if(MYHASH)
+			{
+			
+				if(strstr(rcv_message, "0x") == NULL) //if the message is for encoding
+				{ 
+					//we are encoding every substring in rcv_message
+					char *p = strtok (rcv_message, " "); //break rcv_message into substrings
+					while (p != NULL)
+					{
+						int ascii=0;
+						int number = 57;
+						for(int i=0;i<strlen(p);i++){
+							ascii = ascii + ((int)p[i]*number);
+							number++;
+						}
+							  //add ascii value of every char in substring
+						//printf("Storing in %d: %s with ascii %d\n",numberOfWords,p,ascii);
+						
+						strcpy(word[numberOfWords],p); //adding substring to word array
+						char x[1024];
+						sprintf(x, "%d", ascii); //converting ascii value from int to string and storing in x
+						strcpy(hash[numberOfWords],x); //storing x in hash array
+						numberOfWords++; // this is index
+
+						p = strtok (NULL, " ");
+					}
+				
+					//this is to get the hashes in correct order and concat to message as now we are sure there are no words with no hashes
+					char *b = strtok (copyRcv, " ");
+					while (b != NULL)
+					{
+						// I am just doing 10 words now
+						for(int i = 0; i < 10; i++){ 
+							//printf("b is: %s, word[%d]: %s\n",b,i,word[i]);
+
+							if(strcmp(b,word[i])==0){ //compare the substring to word array elements
+								strcat(message,hash[i]); //if found concat to message
+								strcat(message," "); //spacing
+								break;
+							}
+						}
+							
+						b = strtok (NULL, " ");
+					}
+					
+						//For error checking
+						for(int i = 0; i < 10; i++)
+							printf("Word[%d]: %s\n",i,word[i]);
+						for(int i = 0; i < 10; i++)
+							printf("Hash[%d]: %s\n",i,hash[i]);
+						
+				} else { //This is encoding part if message recieved starts with 0x
+						
+						char *b = strtok (copyRcv, " ");
+						while (b != NULL)
+						{
+							b = strtok (NULL, " ");
+							if(b!= NULL)
+							{	
+								//Im just doing 10 words but can be more
+								for(int i = 0; i < 10; i++){
+									if(strcmp(b,hash[i])==0){ //compare the substring to hash array elements
+										strcat(message,word[i]); //if found concat to message
+										strcat(message," ");  //spacing
+										break;
+									}	
+								}
+							}
+						}
+							//printf("message is: %s",message);
+				}
+				 
+				
+					
+			send(connected_sock, message, strlen(message), 0);
+			if (strstr(rcv_message, "Bye") != NULL) {
+						exit(0);
+			}
+		} //My Hash End
+	} 
 		
 		close(connected_sock);
 		exit(0);
