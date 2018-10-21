@@ -59,18 +59,12 @@ int main() {
 		/* Receive data */
 		char rcv_message[1024]={"Hi"};
 		char message[1024]={"Hi"};
-		gets(message); //gets tweet from console
-		count = send(sock, message, strlen(message), 0);
-		if (count < 0) {
-			printf("Error in send()\n");
-			exit(-1);
-		} 
-		count = recv(sock, rcv_message, sizeof(rcv_message), 0);
-		if (count < 0) {
-			printf("Error in recv()\n");
-			exit(-1);
-		} 
-		printf("Server: %s\n", rcv_message); //Decoded/encoded tweet recieved
+		gets(message);
+		printf("Sending: %s\n", message);
+		send(sock, message, strlen(message), 0);
+		//Sleep(1000);
+		recv(sock, rcv_message, sizeof(rcv_message), 0);
+		printf("Server: %s\n", rcv_message);
 		if (strstr(message, "Bye") != NULL) {
 			exit(0);
 		}

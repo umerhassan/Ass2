@@ -20,10 +20,8 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include <netdb.h>
-#define HASHASCII 0 //for ascii hash 0 for ignore 1 for if u wanna implement
-#define SIMPLEHASH 1
-static char word[200][200]; //for storing words
-static char hash[200][200]; //for storing hashes
+static char word[200][200];
+static char hash[200][200];
 int numberOfWords = 0;
 int main() {
 
@@ -81,18 +79,12 @@ int main() {
 		while (1) {
 			/* Receive data */
 			char rcv_message[1024]={"Hi"};
-			char message[1024]={"0x "}; // all other stuff will be concanated with this to send to client
+			char message[1024]={"0x "};
 			
-			count = recv(connected_sock, rcv_message, sizeof(rcv_message), 0);
-			if (count < 0) {
-				printf("Error in send()\n");
-				exit(-1);
-			} 
+			recv(connected_sock, rcv_message, sizeof(rcv_message), 0);
+			
 			char copyRcv[1024];
 			strcpy(copyRcv,rcv_message);
-
-//////////////////////////////////////////			
-			if(HASHASCII){
 			
 			if(strstr(rcv_message, "0x") == NULL) {
 			char *p = strtok (rcv_message, " ");
@@ -155,84 +147,32 @@ int main() {
 				
 				
 			}
-		
-			
-			send(connected_sock, message, strlen(message), 0);
-			if (strstr(rcv_message, "Bye") != NULL) {
-				exit(0);
-			}
-		} //Hash ASCII end
-		 
-		
-		if(SIMPLEHASH){
-			
-			if(strstr(rcv_message, "0x") == NULL) {
-			char *p = strtok (rcv_message, " ");
-			while (p != NULL)
-			{
-				
-				strcpy(word[numberOfWords],p);
-				char x[1024];
-				sprintf(x, "%d", numberOfWords+1);
-				strcpy(hash[numberOfWords],x);
-				numberOfWords++;
-
-				p = strtok (NULL, " ");
-			}
-		
-			char *b = strtok (copyRcv, " ");
-			while (b != NULL)
-			{
-				for(int i = 0; i < 10; i++){
-					printf("b is: %s, word[%d]: %s\n",b,i,word[i]);
-
-					if(strcmp(b,word[i])==0){
-						strcat(message,hash[i]);
-						strcat(message," ");
-						break;
-					}
-				}
-					
-				printf("b: %s\n",b);
-				b = strtok (NULL, " ");
-			}
-			
-			for(int i = 0; i < 10; i++)
+		/*	for(int i = 0; i < 10; i++){
 				printf("Word[%d]: %s\n",i,word[i]);
-			for(int i = 0; i < 10; i++)
-				printf("Hash[%d]: %s\n",i,hash[i]);
-			
-			} else{
-				
-				char *b = strtok (copyRcv, " ");
-				while (b != NULL)
-				{
-					b = strtok (NULL, " ");
-					if(b!= NULL){
-						for(int i = 0; i < 10; i++){
-							printf("hahhah b is: %s, hash[%d]: %s\n",b,i,hash[i]);
-
-							if(strcmp(b,hash[i])==0){
-								strcat(message,word[i]);
-								strcat(message," ");
-								break;
-							}
-						}
-					}
-					printf("message is: %s",message);
+				if(strcmp(rcv_message,word[i])==0){
+				  printf("Hash[%d]: %s\n",i,hash[i]);
+				  strcpy(message,hash[i]);
+				  send(connected_sock, message, strlen(message), 0);
+				  break;
 				}
-				
-				
 			}
-		
+			for(int i = 0; i < 10; i++){
+				printf("Hash[%d]: %s\n",i,hash[i]);
+				if(strcmp(rcv_message,hash[i])==0){
+				  printf("Word[%d]: %s\n",i,word[i]);
+				  strcpy(message,word[i]);
+				  send(connected_sock, message, strlen(message), 0);
+				  break;
+				}
+			}
+			*/
 			
 			send(connected_sock, message, strlen(message), 0);
 			if (strstr(rcv_message, "Bye") != NULL) {
 				exit(0);
 			}
-		} //end simple hash
-		} 
-		
+		}
+
 		close(connected_sock);
 		exit(0);
 		
