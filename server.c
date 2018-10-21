@@ -88,79 +88,85 @@ int main() {
 				printf("Error in send()\n");
 				exit(-1);
 			} 
+			
+			/*This is copy of recieved message*/
 			char copyRcv[1024];
 			strcpy(copyRcv,rcv_message);
 
-//////////////////////////////////////////			
-			if(HASHASCII){
+			/*This is start of ASCII HASH*/
+			if(HASHASCII)
+			{
 			
-			if(strstr(rcv_message, "0x") == NULL) {
-			char *p = strtok (rcv_message, " ");
-			while (p != NULL)
-			{
-				int ascii=0;
-				for(int i=0;i<strlen(p);i++)
-					ascii = ascii + (int)p[i];
-				printf("Storing in %d: %s with ascii %d\n",numberOfWords,p,ascii);
-				strcpy(word[numberOfWords],p);
-				char x[1024];
-				sprintf(x, "%d", ascii);
-				strcpy(hash[numberOfWords],x);
-				numberOfWords++;
+				if(strstr(rcv_message, "0x") == NULL) //if the message is for encoding
+				{ 
+					//we are encoding every substring in rcv_message
+					char *p = strtok (rcv_message, " "); //break rcv_message into substrings
+					while (p != NULL)
+					{
+						int ascii=0;
+						for(int i=0;i<strlen(p);i++)
+							ascii = ascii + (int)p[i];   //add ascii value of every char in substring
+						//printf("Storing in %d: %s with ascii %d\n",numberOfWords,p,ascii);
+						
+						strcpy(word[numberOfWords],p); //adding substring to word array
+						char x[1024];
+						sprintf(x, "%d", ascii); //converting ascii value from int to string and storing in x
+						strcpy(hash[numberOfWords],x); //storing x in hash array
+						numberOfWords++;
 
-				p = strtok (NULL, " ");
-			}
-		
-			char *b = strtok (copyRcv, " ");
-			while (b != NULL)
-			{
-				for(int i = 0; i < 10; i++){
-					printf("b is: %s, word[%d]: %s\n",b,i,word[i]);
-
-					if(strcmp(b,word[i])==0){
-						strcat(message,hash[i]);
-						strcat(message," ");
-						break;
+						p = strtok (NULL, " ");
 					}
-				}
-					
-				printf("b: %s\n",b);
-				b = strtok (NULL, " ");
-			}
-			
-			for(int i = 0; i < 10; i++)
-				printf("Word[%d]: %s\n",i,word[i]);
-			for(int i = 0; i < 10; i++)
-				printf("Hash[%d]: %s\n",i,hash[i]);
-			
-			} else{
 				
-				char *b = strtok (copyRcv, " ");
-				while (b != NULL)
-				{
-					b = strtok (NULL, " ");
-					if(b!= NULL){
+					char *b = strtok (copyRcv, " ");
+					while (b != NULL)
+					{
 						for(int i = 0; i < 10; i++){
-							printf("hahhah b is: %s, hash[%d]: %s\n",b,i,hash[i]);
+							printf("b is: %s, word[%d]: %s\n",b,i,word[i]);
 
-							if(strcmp(b,hash[i])==0){
-								strcat(message,word[i]);
+							if(strcmp(b,word[i])==0){
+								strcat(message,hash[i]);
 								strcat(message," ");
 								break;
 							}
 						}
+							
+						printf("b: %s\n",b);
+						b = strtok (NULL, " ");
 					}
-					printf("message is: %s",message);
-				}
+					
+					for(int i = 0; i < 10; i++)
+						printf("Word[%d]: %s\n",i,word[i]);
+					for(int i = 0; i < 10; i++)
+						printf("Hash[%d]: %s\n",i,hash[i]);
+					
+					} else{
+						
+						char *b = strtok (copyRcv, " ");
+						while (b != NULL)
+						{
+							b = strtok (NULL, " ");
+							if(b!= NULL){
+								for(int i = 0; i < 10; i++){
+									printf("hahhah b is: %s, hash[%d]: %s\n",b,i,hash[i]);
+
+									if(strcmp(b,hash[i])==0){
+										strcat(message,word[i]);
+										strcat(message," ");
+										break;
+									}
+								}
+							}
+							printf("message is: %s",message);
+						}
+						
+						
+					}
 				
-				
-			}
-		
-			
-			send(connected_sock, message, strlen(message), 0);
-			if (strstr(rcv_message, "Bye") != NULL) {
-				exit(0);
-			}
+					
+					send(connected_sock, message, strlen(message), 0);
+					if (strstr(rcv_message, "Bye") != NULL) {
+						exit(0);
+					}
 		} //Hash ASCII end
 		 
 		
