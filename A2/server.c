@@ -250,8 +250,10 @@ int main() {
 					{
 						int ascii=0;
 						int number = 57;
+						printf("\n");
 						for(int i=0;i<strlen(p);i++){
 							ascii = ascii + ((int)p[i]*number);
+							printf("Multiplying %d of %c with number %d to get %d\n",(int)p[i],p[i],number,((int)p[i]*number));
 							number++;
 						}
 							  //add ascii value of every char in substring
