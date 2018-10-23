@@ -54,15 +54,21 @@ int main()
 				fprintf(fp, " Hexvalue: %s\n", hex);
 				strcpy(value, hex);
 				result = strtol(value, &eptr, 16);
+				fprintf(fp, "   adding   Result: %lx   Result2: %lx to get %lx", result,result2,result2+result);
+				while()
 				if((result2+result)<=0xffff){
 					result2=result2+result;
 				}else{
 					
+					long int z=(result2+result)/0x10000;
+					long int y=(result2+result)%0x10000;
+					fprintf(fp, "     Result2 is: %lx  z: %lx     y: %lx\n", result2,z,y);
+					result2=result2+z+y;
+					
 				}
-				result2=result2+result;
-				fprintf(fp, "     Result2: %lx\n", result2);
+				fprintf(fp, "     Result2 after loop: %lx\n", result2);
 
-				printf("Result2: %lx",result2);
+			
 			//	printf("\n");
 			//	printf("i is %d, lenght is %d\n",i,strlen(tweet));
 			}
