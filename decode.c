@@ -54,6 +54,11 @@ int main()
 				fprintf(fp, " Hexvalue: %s\n", hex);
 				strcpy(value, hex);
 				result = strtol(value, &eptr, 16);
+				if((result2+result)<=0xffff){
+					result2=result2+result;
+				}else{
+					
+				}
 				result2=result2+result;
 				fprintf(fp, "     Result2: %lx\n", result2);
 
