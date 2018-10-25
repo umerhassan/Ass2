@@ -59,7 +59,7 @@ int main()
 				if((result2+result)<=0xffff){
 					result2=result2+result;
 				}else{
-					
+					//handling overflow
 					long int z=(result2+result)/0x10000; //getting coffecient
 					long int y=(result2+result)%0x10000; //getting remainder 
 					fprintf(fp, "     Result2 is: %lx  z: %lx     y: %lx\n", result2,z,y);
@@ -72,7 +72,7 @@ int main()
 			//	printf("\n");
 			//	printf("i is %d, lenght is %d\n",i,strlen(tweet));
 			}
-			long result3=0xffff-result2;
+			long result3=0xffff-result2; 
 			
 			fprintf(fp, "\n%lx\n", result3);
 			//printf("%lx\n",result3);
