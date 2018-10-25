@@ -60,8 +60,8 @@ int main()
 					result2=result2+result;
 				}else{
 					
-					long int z=(result2+result)/0x10000;
-					long int y=(result2+result)%0x10000;
+					long int z=(result2+result)/0x10000; //getting coffecient
+					long int y=(result2+result)%0x10000; //getting remainder 
 					fprintf(fp, "     Result2 is: %lx  z: %lx     y: %lx\n", result2,z,y);
 					result2=result2+z+y;
 					
