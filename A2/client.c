@@ -32,6 +32,7 @@ int main() {
 	server.sin_family = AF_INET;
 	server.sin_port = htons(MYPORTNUM);
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
+	server.sin_addr.s_addr = inet_addr("136.159.");
 
 	/* Create the listening socket */
 	int sock;
